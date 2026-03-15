@@ -9,12 +9,9 @@ def cors(r):
     r.headers["Access-Control-Allow-Origin"] = "*"
     return r
 
-def find_bin(names, fallback):
-    for name in names:
-        path = shutil.which(name)
-        if path:
-            return path
-    return fallback
+# Rutas explícitas — /usr/bin/vlc tiene prioridad sobre snap
+VLC_PATH = "/usr/bin/vlc"
+ACE_PATH = "/snap/bin/acestreamplayer"
 
 @app.route("/play")
 def play():
@@ -24,29 +21,23 @@ def play():
         return jsonify({"ok": False, "error": "No URL provided"})
 
     if player == "ace":
-        bin_path = find_bin(["acestreamplayer"], "/snap/bin/acestreamplayer")
         if "ace/getstream?id=" in url:
             hash_id = url.split("ace/getstream?id=")[-1].split("&")[0]
-            ace_url = "acestream://" + hash_id
-        elif url.startswith("acestream://"):
-            ace_url = url
+            target_url = "acestream://" + hash_id
         else:
-            ace_url = url
-        cmd = [bin_path, ace_url]
+            target_url = url
+        cmd = [ACE_PATH, target_url]
     else:
-        bin_path = find_bin(["vlc"], "/snap/bin/vlc")
-        cmd = [bin_path, "--no-video-title-show", url]
+        cmd = [VLC_PATH, "--no-video-title-show", url]
 
     try:
-        subprocess.Popen(cmd)
-        return jsonify({"ok": True, "cmd": cmd[0], "url": cmd[1]})
+        subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        return jsonify({"ok": True, "player": cmd[0], "url": cmd[1]})
     except Exception as e:
         return jsonify({"ok": False, "error": str(e)})
 
 if __name__ == "__main__":
-    vlc = find_bin(["vlc"], "/snap/bin/vlc")
-    ace = find_bin(["acestreamplayer"], "/snap/bin/acestreamplayer")
     print(f"Server running on http://127.0.0.1:5566")
-    print(f"  VLC:              {vlc}")
-    print(f"  Acestream Player: {ace}")
+    print(f"  VLC:              {VLC_PATH}")
+    print(f"  Acestream Player: {ACE_PATH}")
     app.run(host="127.0.0.1", port=5566)
