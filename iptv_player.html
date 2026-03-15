@@ -6,437 +6,436 @@
 <title>IPTV Player</title>
 <style>
   :root {
-    --bg: #0f0f13;
-    --surface: #1a1a24;
-    --surface2: #22222f;
-    --accent: #6c63ff;
-    --accent2: #a78bfa;
-    --text: #e2e2f0;
-    --muted: #7070a0;
-    --badge-4k: #f59e0b;
-    --badge-fhd: #10b981;
-    --badge-hd: #3b82f6;
-    --badge-sd: #6b7280;
-    --radius: 12px;
+    --bg:#0f0f13; --surface:#1a1a24; --surface2:#22222f;
+    --accent:#6c63ff; --accent2:#a78bfa;
+    --text:#e2e2f0; --muted:#7070a0; --radius:12px;
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:var(--bg); color:var(--text); font-family:'Segoe UI',system-ui,sans-serif; min-height:100vh; }
 
-  header {
-    background: var(--surface);
-    border-bottom: 1px solid #2a2a3f;
-    padding: 16px 24px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    flex-wrap: wrap;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-  header h1 { font-size: 1.3rem; font-weight: 700; color: var(--accent2); flex-shrink: 0; }
-  header h1 span { color: var(--accent); }
+  header { background:var(--surface); border-bottom:1px solid #2a2a3f; padding:14px 20px; display:flex; align-items:center; gap:12px; flex-wrap:wrap; position:sticky; top:0; z-index:100; }
+  header h1 { font-size:1.2rem; font-weight:700; color:var(--accent2); flex-shrink:0; }
+  header h1 span { color:var(--accent); }
+  #search { flex:1; min-width:180px; background:var(--surface2); border:1px solid #2a2a3f; border-radius:8px; padding:7px 13px; color:var(--text); font-size:.9rem; outline:none; transition:border-color .2s; }
+  #search:focus { border-color:var(--accent); }
+  #m3u-row { display:flex; gap:8px; flex-wrap:wrap; width:100%; margin-top:8px; }
+  #m3u-url { flex:1; min-width:240px; background:var(--surface2); border:1px solid #2a2a3f; border-radius:8px; padding:7px 13px; color:var(--text); font-size:.82rem; outline:none; }
+  #m3u-url:focus { border-color:var(--accent); }
+  #load-btn { background:var(--accent); color:#fff; border:none; border-radius:8px; padding:7px 16px; cursor:pointer; font-size:.88rem; font-weight:600; transition:background .2s; }
+  #load-btn:hover { background:var(--accent2); }
 
-  #search {
-    flex: 1; min-width: 200px;
-    background: var(--surface2);
-    border: 1px solid #2a2a3f;
-    border-radius: 8px;
-    padding: 8px 14px;
-    color: var(--text); font-size: 0.95rem;
-    outline: none; transition: border-color 0.2s;
-  }
-  #search:focus { border-color: var(--accent); }
+  #groups { display:flex; gap:7px; padding:12px 20px; overflow-x:auto; background:var(--surface); border-bottom:1px solid #2a2a3f; scrollbar-width:thin; }
+  .gbtn { background:var(--surface2); border:1px solid #2a2a3f; color:var(--muted); border-radius:20px; padding:5px 15px; cursor:pointer; font-size:.82rem; white-space:nowrap; transition:all .2s; flex-shrink:0; }
+  .gbtn:hover, .gbtn.active { background:var(--accent); border-color:var(--accent); color:#fff; }
 
-  #m3u-input-wrap { display: flex; gap: 8px; flex-wrap: wrap; width: 100%; margin-top: 8px; }
-  #m3u-url {
-    flex: 1; min-width: 260px;
-    background: var(--surface2); border: 1px solid #2a2a3f;
-    border-radius: 8px; padding: 8px 14px;
-    color: var(--text); font-size: 0.85rem; outline: none;
-  }
-  #m3u-url:focus { border-color: var(--accent); }
-  #load-btn {
-    background: var(--accent); color: #fff; border: none;
-    border-radius: 8px; padding: 8px 18px;
-    cursor: pointer; font-size: 0.9rem; font-weight: 600; transition: background 0.2s;
-  }
-  #load-btn:hover { background: var(--accent2); }
+  #content { padding:20px; }
+  .group-section { margin-bottom:32px; }
+  .group-title { font-size:.9rem; font-weight:700; color:var(--accent2); margin-bottom:12px; padding-bottom:7px; border-bottom:1px solid #2a2a3f; text-transform:uppercase; letter-spacing:.06em; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:10px; }
 
-  #groups {
-    display: flex; gap: 8px; padding: 14px 24px;
-    overflow-x: auto; background: var(--surface);
-    border-bottom: 1px solid #2a2a3f; scrollbar-width: thin;
-  }
-  .group-btn {
-    background: var(--surface2); border: 1px solid #2a2a3f;
-    color: var(--muted); border-radius: 20px; padding: 6px 16px;
-    cursor: pointer; font-size: 0.85rem; white-space: nowrap;
-    transition: all 0.2s; flex-shrink: 0;
-  }
-  .group-btn:hover, .group-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .card { background:var(--surface); border:1px solid #2a2a3f; border-radius:var(--radius); overflow:hidden; cursor:pointer; transition:transform .15s, border-color .15s, box-shadow .15s; }
+  .card:hover { transform:translateY(-3px); border-color:var(--accent); box-shadow:0 6px 20px rgba(108,99,255,.2); }
+  .logo-wrap { background:#12121a; height:80px; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+  .logo-wrap img { max-height:64px; max-width:88%; object-fit:contain; }
+  .logo-wrap .nologo { font-size:1.8rem; color:var(--muted); }
+  .card-info { padding:8px 10px; }
+  .card-name { font-size:.78rem; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .card-meta { display:flex; align-items:center; gap:5px; margin-top:5px; flex-wrap:wrap; }
+  .badge { font-size:.6rem; font-weight:700; padding:2px 6px; border-radius:4px; text-transform:uppercase; letter-spacing:.03em; }
+  .b4k  { background:#f59e0b; color:#000; }
+  .bfhd { background:#10b981; color:#000; }
+  .bhd  { background:#3b82f6; color:#fff; }
+  .bsd  { background:#6b7280; color:#fff; }
+  .bace  { background:#7c3aed; color:#fff; }
+  .bhttp { background:#0ea5e9; color:#fff; }
+  .bopts { font-size:.68rem; color:var(--muted); margin-left:auto; }
 
-  #content { padding: 24px; }
-  .group-section { margin-bottom: 36px; }
-  .group-title {
-    font-size: 1rem; font-weight: 700; color: var(--accent2);
-    margin-bottom: 14px; padding-bottom: 8px;
-    border-bottom: 1px solid #2a2a3f;
-    text-transform: uppercase; letter-spacing: 0.05em;
-  }
-  .channels-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 12px;
-  }
-  .channel-card {
-    background: var(--surface); border: 1px solid #2a2a3f;
-    border-radius: var(--radius); overflow: hidden;
-    cursor: pointer; transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
-  }
-  .channel-card:hover {
-    transform: translateY(-3px); border-color: var(--accent);
-    box-shadow: 0 8px 24px rgba(108,99,255,0.2);
-  }
-  .channel-logo-wrap {
-    background: #12121a; height: 90px;
-    display: flex; align-items: center; justify-content: center; overflow: hidden;
-  }
-  .channel-logo-wrap img { max-height: 70px; max-width: 90%; object-fit: contain; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5)); }
-  .channel-logo-wrap .no-logo { font-size: 2rem; color: var(--muted); }
-  .channel-info { padding: 10px 12px; }
-  .channel-name { font-size: 0.82rem; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .channel-meta { display: flex; align-items: center; gap: 6px; margin-top: 6px; }
-  .badge { font-size: 0.65rem; font-weight: 700; padding: 2px 7px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.04em; }
-  .badge-4k  { background: #f59e0b; color: #000; }
-  .badge-fhd { background: #10b981; color: #000; }
-  .badge-hd  { background: #3b82f6; color: #fff; }
-  .badge-sd  { background: #6b7280; color: #fff; }
-  .badge-ace  { background: #7c3aed; color: #fff; }
-  .badge-http { background: #0ea5e9; color: #fff; }
-  .options-count { font-size: 0.7rem; color: var(--muted); margin-left: auto; }
+  .overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.78); z-index:200; align-items:center; justify-content:center; }
+  .overlay.open { display:flex; }
+  .modal { background:var(--surface); border:1px solid #2a2a3f; border-radius:16px; padding:22px; width:90%; max-width:460px; max-height:80vh; overflow-y:auto; }
+  .modal-hd { display:flex; align-items:center; gap:12px; margin-bottom:18px; }
+  .modal-logo { width:44px; height:44px; object-fit:contain; }
+  .modal-title { font-size:.95rem; font-weight:700; }
+  .modal-x { margin-left:auto; background:none; border:none; color:var(--muted); font-size:1.3rem; cursor:pointer; line-height:1; }
+  .modal-x:hover { color:var(--text); }
+  .stream-row { background:var(--surface2); border:1px solid #2a2a3f; border-radius:9px; padding:10px 12px; margin-bottom:9px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .stream-label { font-size:.8rem; color:var(--muted); flex:1; min-width:100px; display:flex; align-items:center; gap:5px; }
+  .btn { border:none; border-radius:7px; padding:6px 12px; font-size:.78rem; font-weight:600; cursor:pointer; }
+  .btn:hover { opacity:.85; }
+  .btn-vlc { background:#e87c00; color:#fff; }
+  .btn-web { background:var(--accent); color:#fff; }
 
-  .modal-overlay {
-    display: none; position: fixed; inset: 0;
-    background: rgba(0,0,0,0.75); z-index: 200;
-    align-items: center; justify-content: center;
-  }
-  .modal-overlay.open { display: flex; }
-  .modal {
-    background: var(--surface); border: 1px solid #2a2a3f;
-    border-radius: 16px; padding: 24px;
-    width: 90%; max-width: 500px; max-height: 80vh; overflow-y: auto;
-  }
-  .modal-header { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
-  .modal-logo { width: 48px; height: 48px; object-fit: contain; }
-  .modal-title { font-size: 1rem; font-weight: 700; }
-  .modal-close { margin-left: auto; background: none; border: none; color: var(--muted); font-size: 1.4rem; cursor: pointer; }
-  .modal-close:hover { color: var(--text); }
-
-  .stream-option {
-    background: var(--surface2); border: 1px solid #2a2a3f;
-    border-radius: 10px; padding: 12px 14px; margin-bottom: 10px;
-    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
-  }
-  .stream-option-label { font-size: 0.85rem; color: var(--muted); flex: 1; min-width: 120px; display: flex; align-items: center; gap: 6px; }
-  .btn-ace  { background: #7c3aed; color: #fff; border: none; border-radius: 8px; padding: 7px 13px; font-size: 0.8rem; font-weight: 600; cursor: pointer; }
-  .btn-vlc  { background: #e87c00; color: #fff; border: none; border-radius: 8px; padding: 7px 13px; font-size: 0.8rem; font-weight: 600; cursor: pointer; }
-  .btn-browser { background: var(--accent); color: #fff; border: none; border-radius: 8px; padding: 7px 13px; font-size: 0.8rem; font-weight: 600; cursor: pointer; }
-  .btn-ace:hover, .btn-vlc:hover, .btn-browser:hover { opacity: 0.85; }
-
-  #status-bar {
-    position: fixed; bottom: 16px; right: 16px;
-    background: var(--surface); border: 1px solid #2a2a3f;
-    border-radius: 10px; padding: 10px 16px;
-    font-size: 0.82rem; color: var(--accent2);
-    display: none; z-index: 300; max-width: 320px;
-  }
-  #empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
-  #empty-state .icon { font-size: 3rem; margin-bottom: 16px; }
-  ::-webkit-scrollbar { width: 6px; height: 6px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: #2a2a3f; border-radius: 3px; }
+  #toast { position:fixed; bottom:14px; right:14px; background:var(--surface); border:1px solid #2a2a3f; border-radius:9px; padding:9px 15px; font-size:.8rem; color:var(--accent2); display:none; z-index:300; max-width:300px; }
+  #empty { text-align:center; padding:50px 20px; color:var(--muted); }
+  #empty .ei { font-size:2.6rem; margin-bottom:14px; }
+  ::-webkit-scrollbar { width:5px; height:5px; }
+  ::-webkit-scrollbar-thumb { background:#2a2a3f; border-radius:3px; }
 </style>
 </head>
 <body>
 
 <header>
   <h1>📺 <span>IPTV</span>Player</h1>
-  <input type="text" id="search" placeholder="Buscar canal…">
-  <div id="m3u-input-wrap">
-    <input type="text" id="m3u-url" placeholder="URL del M3U (raw GitHub, etc.)">
+  <input id="search" type="text" placeholder="Buscar canal…" autocomplete="off">
+  <div id="m3u-row">
+    <input id="m3u-url" type="text" placeholder="URL del M3U (raw GitHub, etc.)">
     <button id="load-btn">Cargar lista</button>
   </div>
 </header>
 
 <div id="groups"></div>
 <div id="content">
-  <div id="empty-state">
-    <div class="icon">📡</div>
-    <p>Introduce la URL de tu lista M3U y pulsa <strong>Cargar lista</strong></p>
-  </div>
+  <div id="empty"><div class="ei">📡</div><p>Introduce la URL de tu M3U y pulsa <strong>Cargar lista</strong></p></div>
 </div>
 
-<div class="modal-overlay" id="modal-overlay">
+<div class="overlay" id="overlay">
   <div class="modal">
-    <div class="modal-header">
-      <img class="modal-logo" id="modal-logo" src="" alt="">
-      <span class="modal-title" id="modal-title"></span>
-      <button class="modal-close" id="modal-close">✕</button>
+    <div class="modal-hd">
+      <img class="modal-logo" id="m-logo" src="" alt="">
+      <span class="modal-title" id="m-title"></span>
+      <button class="modal-x" id="m-close">✕</button>
     </div>
-    <div id="modal-streams"></div>
+    <div id="m-streams"></div>
   </div>
 </div>
 
-<div id="status-bar"></div>
+<div id="toast"></div>
 
 <script>
-const VLC_SERVER = 'http://127.0.0.1:5566';
-const ACE_ENGINE = 'http://127.0.0.1:6878';
+const VLC_SRV = 'http://127.0.0.1:5566';
+const ACE_ENG = 'http://127.0.0.1:6878';
 
-let allChannels = [];
-let activeGroup = 'TODOS';
+// ── Logo map ──────────────────────────────────────────────────────────────────
+const LOGOS = {
+  'Liga De Campeones':  'https://commons.wikimedia.org/wiki/Special:FilePath/UEFA_Champions_League_logo_2.svg',
+  'LaLigaTV':           'https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/M%2B%20LaLiga%20TV.png',
+  'LaLiga Hypermotion': 'https://commons.wikimedia.org/wiki/Special:FilePath/LaLiga_Hypermotion_2023_Vertical_Logo.svg',
+  'DAZN LaLiga 2':      'https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/DAZN%20LaLiga%202.png',
+  'DAZN LaLiga 3':      'https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/DAZN%20LaLiga%203.png',
+  'DAZN LaLiga 4':      'https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/DAZN%20LaLiga%204.png',
+  'DAZN LaLiga 5':      'https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/DAZN%20LaLiga%205.png',
+  'DAZN LaLiga':        'https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/DAZN%20LaLiga.png',
+  'DAZN F1':            'https://commons.wikimedia.org/wiki/Special:FilePath/Formula_1_logo.svg',
+  'DAZN 1':             'https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/DAZN%201.png',
+  'DAZN 2':             'https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/DAZN%202.png',
+  'DAZN 3':             'https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/DAZN%203.png',
+  'DAZN 4':             'https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/DAZN%204.png',
+  'M+ Deportes 7':      'https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/M%2B%20Deportes%207.png',
+  'M+ Deportes 6':      'https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/M%2B%20Deportes%206.png',
+  'M+ Deportes 5':      'https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/M%2B%20Deportes%205.png',
+  'M+ Deportes 4':      'https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/M%2B%20Deportes%204.png',
+  'M+ Deportes 3':      'https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/M%2B%20Deportes%203.png',
+  'M+ Deportes 2':      'https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/M%2B%20Deportes%202.png',
+  'M+ Deportes':        'https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/M%2B%20Deportes.png',
+  'M+ #Vamos':          'https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/M%2B%20%23Vamos.png',
+  'M+ #0':              'https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/M%2B%20%230.png',
+  'M+ Golf':            'https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/M%2B%20Golf.png',
+  'Movistar +':         'https://commons.wikimedia.org/wiki/Special:FilePath/Movistar_Plus%2B_2022_logo.svg',
+  'La 1':               'https://commons.wikimedia.org/wiki/Special:FilePath/La_1_HD_TVE.png',
+  'La 2':               'https://commons.wikimedia.org/wiki/Special:FilePath/La_2_HD_TVE.png',
+  '24h':                'https://commons.wikimedia.org/wiki/Special:FilePath/Logo_Canal_24_horas.svg',
+  'Telecinco':          'https://commons.wikimedia.org/wiki/Special:FilePath/Telecinco.svg',
+  'Cuatro':             'https://commons.wikimedia.org/wiki/Special:FilePath/Cuatro_(TV).svg',
+  'Antena 3':           'https://commons.wikimedia.org/wiki/Special:FilePath/Logo_Antena_3_2025_(Naranja).svg',
+  'La Sexta':           'https://commons.wikimedia.org/wiki/Special:FilePath/La_Sexta_2021.svg',
+  'Mega':               'https://commons.wikimedia.org/wiki/Special:FilePath/MEGA.svg',
+  'Teledeporte':        'https://commons.wikimedia.org/wiki/Special:FilePath/Teledeporte_logo_2021.svg',
+  'GOL PLAY':           'https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/Gol%20Play.png',
+  'Barça TV':           'https://commons.wikimedia.org/wiki/Special:FilePath/FC_Barcelona_(crest).svg',
+  'Eurosport 1':        'https://commons.wikimedia.org/wiki/Special:FilePath/Eurosport_1_2015.svg',
+  'Eurosport 2':        'https://commons.wikimedia.org/wiki/Special:FilePath/Eurosport_2_Logo_2015.svg',
+  'Eurosport 3':        'https://commons.wikimedia.org/wiki/Special:FilePath/Eurosport_3_HD.svg',
+  'Eurosport 4':        'https://commons.wikimedia.org/wiki/Special:FilePath/Eurosport_4_HD.svg',
+  'Copa':               'https://commons.wikimedia.org/wiki/Special:FilePath/Copa_del_Rey_2020_logo.svg',
+  'Supercopa':          'https://commons.wikimedia.org/wiki/Special:FilePath/Supercopa_de_Espana_logo.svg',
+// ── Añadir a LOGOS ────────────────────────────────────────────────────────────
 
+// Liga de Campeones
+  'M+ Liga De Campeones': 'https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/M%2B%20Liga%20De%20Campeones.png',
 
-const LOGO_MAP = {
-'DAZN LaLiga':        'https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/DAZN%20LaLiga.png',
-'DAZN LaLiga 2':      'https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/DAZN%20LaLiga%202.png',
-'DAZN LaLiga 3':      'https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/DAZN%20LaLiga%203.png',
-'DAZN LaLiga 4':      'https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/DAZN%20LaLiga%204.png',
-'DAZN LaLiga 5':      'https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/DAZN%20LaLiga%205.png',
-'DAZN 1':             'https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/DAZN%201.png',
-'DAZN 2':             'https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/DAZN%202.png',
-'DAZN 3':             'https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/DAZN%203.png',
-'DAZN 4':             'https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/DAZN%204.png',
-'DAZN F1':            'https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/DAZN%20F1.png',
-'M+ LaLigaTV':        'https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/M%2B%20LaLiga%20TV.png',
-'LaLiga Hypermotion': 'https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/LaLiga%20Hypermotion.png',
-'Movistar +':         'https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/Movistar%2B.png',
-'La 1':               'https://commons.wikimedia.org/wiki/Special:FilePath/La_1_HD_TVE.png',
-'La 1 UHD':           'https://commons.wikimedia.org/wiki/Special:FilePath/La_1_HD_TVE.png',
-'La 2':               'https://commons.wikimedia.org/wiki/Special:FilePath/La_2_HD_TVE.png',
-'24h':                'https://commons.wikimedia.org/wiki/Special:FilePath/Logo_Canal_24_horas.svg',
-'Telecinco':          'https://commons.wikimedia.org/wiki/Special:FilePath/Telecinco.svg',
-'Cuatro':             'https://commons.wikimedia.org/wiki/Special:FilePath/Cuatro_(TV).svg',
-'Antena 3':           'https://commons.wikimedia.org/wiki/Special:FilePath/Logo_Antena_3_2025_(Naranja).svg',
-'La Sexta':           'https://commons.wikimedia.org/wiki/Special:FilePath/La_Sexta_2021.svg',
-'Mega':               'https://commons.wikimedia.org/wiki/Special:FilePath/MEGA.svg',
-'Teledeporte':        'https://commons.wikimedia.org/wiki/Special:FilePath/Teledeporte_logo_2021.svg',
-'Eurosport 1':        'https://commons.wikimedia.org/wiki/Special:FilePath/Eurosport_1_2015.svg',
-'Eurosport 2':        'https://commons.wikimedia.org/wiki/Special:FilePath/Eurosport_2_Logo_2015.svg',
-'Real Madrid TV':     'https://commons.wikimedia.org/wiki/Special:FilePath/Real_Madrid_CF.svg',
-'Barça TV':           'https://commons.wikimedia.org/wiki/Special:FilePath/FC_Barcelona_(crest).svg',
-'GOL PLAY':           'https://commons.wikimedia.org/wiki/Special:FilePath/Gol_Play_logo.svg',
+  // Eurosport
+  'Eurosport 1': 'https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/Eurosport%201.png',
+  'Eurosport 3': 'https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/Eurosport%203.png',
+  'Eurosport 4': 'https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/Eurosport%204.png',
+
+  // Copa y Supercopa
+  'Copa':        'https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/Copa%20del%20Rey.png',
+  'Supercopa':   'https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/Supercopa%20de%20Espa%C3%B1a.png',
+
+  // TDT
+  'La 2':        'https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/La%202.png',
+  'Cuatro':      'https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/Cuatro.png',
+  'La Sexta':    'https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/La%20Sexta.png',
+  'Teledeporte': 'https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/Teledeporte.png',
+  'GOL PLAY':    'https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/Gol%20Play.png',
+
+  // Clubes
+  'Real Madrid TV': 'https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/Real%20Madrid%20TV.png',
+  'Barça TV':       'https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/Barca%20TV.png',
 
 };
 
-function reclassifyGroup(name, group) {
+function resolveLogo(name, fallback) {
   const n = name.toUpperCase();
-  if (n.startsWith('DAZN')) return 'DAZN';
-  if (n.includes('COPA DEL REY') || n.includes('COPA FHD') || n.includes('COPA HD')) return 'COPA DEL REY';
-  if (n.includes('SUPERCOPA')) return 'SUPERCOPA';
-  return group;
-}
-
-function resolveLogo(canonicalName, m3uLogo) {
-  for (const [key, url] of Object.entries(LOGO_MAP)) {
-    if (canonicalName.toUpperCase().includes(key.toUpperCase()) ||
-        key.toUpperCase().includes(canonicalName.toUpperCase())) {
-      return url;
-    }
+  for (const [k, url] of Object.entries(LOGOS)) {
+    if (k.toUpperCase() === n) return url;
   }
-  return m3uLogo; 
+  for (const [k, url] of Object.entries(LOGOS)) {
+    if (n.includes(k.toUpperCase())) return url;
+  }
+  return fallback || '';
 }
 
+// ── Reclasificación de grupos ─────────────────────────────────────────────────
+const GROUP_RULES = [
+  [/^DAZN/i,                                           'DAZN'],
+  [/LIGA\s*DE\s*CAMPEONES/i,                           'LIGA DE CAMPEONES'],
+  [/COPA\s*DEL\s*REY|^COPA\s/i,                       'COPA DEL REY'],
+  [/SUPERCOPA/i,                                        'SUPERCOPA'],
+  [/LALIGA|LALIGATV|HYPERMOTION/i,                     'LIGA'],
+  [/M\+\s*(DEPORTES|DEPORTE)/i,                        'DEPORTES'],
+  [/EUROSPORT/i,                                        'EUROSPORT'],
+  [/^(LA [12]|24H|TELECINCO|CUATRO|ANTENA|SEXTA|MEGA|TELEDEPORTE|GOL PLAY|REAL MADRID TV|BARC|M\+\s*(GOLF|#|VAMOS)|TOROS|MOVISTAR)/i, 'TDT'],
+];
 
+function reclassify(name, rawGroup) {
+  for (const [re, group] of GROUP_RULES) {
+    if (re.test(name)) return group;
+  }
+  return rawGroup.trim().toUpperCase() || 'OTROS';
+}
+
+// ── Parser M3U ────────────────────────────────────────────────────────────────
 function parseM3U(text) {
   const lines = text.split(/\r?\n/);
-  const channels = [];
-  let current = null;
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i].trim();
-    if (line.startsWith('#EXTINF')) {
-      current = {};
-      const nameMatch = line.match(/,(.+)$/);
-      current.name = nameMatch ? nameMatch[1].trim() : 'Canal desconocido';
-      const logoMatch = line.match(/tvg-logo="([^"]*)"/);
-      current.logo = logoMatch ? logoMatch[1] : '';
-      const groupMatch = line.match(/group-title="([^"]*)"/i);
-      current.group = groupMatch ? groupMatch[1].trim().toUpperCase() : 'OTROS';
-      current.quality = detectQuality(current.name);
-      current.group = reclassifyGroup(current.name, current.group);
-    } else if (current && line && !line.startsWith('#')) {
-      current.url = line;
-      current.type = line.startsWith('acestream://') ? 'ace' : 'http';
-      channels.push(current);
-      current = null;
+  const result = [];
+  let cur = null;
+  for (const raw of lines) {
+    const line = raw.trim();
+    if (/^#EXTINF/i.test(line)) {
+      const norm   = line.replace(/grupo-titulo/gi, 'group-title').replace(/group-title\s*=/gi, 'group-title=');
+      const name   = (norm.match(/,(.+)$/) || [])[1]?.trim() || 'Canal';
+      const logo   = (norm.match(/tvg-logo\s*=\s*"([^"]*)"/i) || [])[1] || '';
+      const rawGrp = (norm.match(/group-title\s*=\s*"([^"]*)"/i) || [])[1] || 'OTROS';
+      cur = { name, logo, group: reclassify(name, rawGrp), qual: detectQ(name) };
+    } else if (cur && line && !line.startsWith('#')) {
+      cur.url  = line;
+      cur.type = line.startsWith('acestream://') ? 'ace' : 'http';
+      result.push(cur);
+      cur = null;
     }
   }
-  return channels;
+  return result;
 }
 
-function detectQuality(name) {
+function detectQ(name) {
   const n = name.toUpperCase();
-  if (n.includes('4K') || n.includes('UHD')) return '4K';
+  if (n.includes('4K') || n.includes('UHD'))  return '4K';
   if (n.includes('FHD') || n.includes('1080')) return 'FHD';
-  if (n.includes('HD') || n.includes('720')) return 'HD';
+  if (n.includes('HD')  || n.includes('720'))  return 'HD';
   return 'SD';
 }
 
-function getCanonicalName(name) {
+function canonical(name) {
   return name
     .replace(/\s*(4K|FHD|HD|SD|UHD|\d{3,4}p?)\s*$/i, '')
-    .replace(/\s*\(Opci[oó]n \d+\)\s*$/i, '')
+    .replace(/\s*M\d+\s*$/i, '')
+    .replace(/\s*\(Opci[oó]n\s*\d+\)\s*$/i, '')
+    .replace(/\s*(Multi|Opci[oó]n\s*\d+)\s*$/i, '')
     .trim();
 }
 
-function groupByCanonical(channels) {
+function groupChannels(raw) {
   const map = new Map();
-  for (const ch of channels) {
-    const key = ch.group + '||' + getCanonicalName(ch.name);
+  for (const ch of raw) {
+    const cname = canonical(ch.name);
+    const key   = ch.group + '||' + cname;
     if (!map.has(key)) {
-      const cName = getCanonicalName(ch.name);
-      const resolvedLogo = resolveLogo(cName, ch.logo);
-      map.set(key, { ...ch, logo: resolvedLogo, streams: [ch], canonicalName: cName });
+      map.set(key, { ...ch, cname, logo: resolveLogo(cname, ch.logo), streams: [ch] });
     } else {
       map.get(key).streams.push(ch);
     }
   }
-  return Array.from(map.values());
+  return [...map.values()];
 }
 
-function render(filterGroup, search) {
-  const content = document.getElementById('content');
-  const groupsBar = document.getElementById('groups');
-  let filtered = allChannels;
-  if (search) {
-    const s = search.toLowerCase();
-    filtered = allChannels.filter(c => c.canonicalName.toLowerCase().includes(s) || c.group.toLowerCase().includes(s));
+// ── Estado ────────────────────────────────────────────────────────────────────
+let channels    = [];
+let activeGroup = 'TODOS';
+
+const GROUP_ORDER = ['TODOS','LIGA DE CAMPEONES','DAZN','LIGA','TDT','DEPORTES','EUROSPORT','COPA DEL REY','SUPERCOPA','OTROS'];
+
+function orderedGroups(chs) {
+  const present = new Set(chs.map(c => c.group));
+  const ordered = GROUP_ORDER.filter(g => g === 'TODOS' || present.has(g));
+  const extra   = [...present].filter(g => !GROUP_ORDER.includes(g)).sort();
+  return [...ordered, ...extra];
+}
+
+// ── Render ────────────────────────────────────────────────────────────────────
+function render(group, q) {
+  const bar = document.getElementById('groups');
+  let list = channels;
+  if (q) {
+    const s = q.toLowerCase();
+    list = channels.filter(c => c.cname.toLowerCase().includes(s) || c.group.toLowerCase().includes(s));
   }
-  const groups = ['TODOS', ...new Set(allChannels.map(c => c.group))];
-  groupsBar.innerHTML = groups.map(g =>
-    `<button class="group-btn ${g === filterGroup ? 'active' : ''}" data-group="${g}">${g}</button>`
+  bar.innerHTML = orderedGroups(channels).map(g =>
+    `<button class="gbtn${g === group ? ' active' : ''}" data-g="${g}">${g}</button>`
   ).join('');
-  groupsBar.querySelectorAll('.group-btn').forEach(btn => {
-    btn.addEventListener('click', () => { activeGroup = btn.dataset.group; render(activeGroup, document.getElementById('search').value); });
-  });
-  let visible = filterGroup === 'TODOS' ? filtered : filtered.filter(c => c.group === filterGroup);
-  if (visible.length === 0) {
-    content.innerHTML = `<div id="empty-state"><div class="icon">🔍</div><p>No se encontraron canales</p></div>`;
+  bar.querySelectorAll('.gbtn').forEach(b =>
+    b.addEventListener('click', () => { activeGroup = b.dataset.g; render(activeGroup, document.getElementById('search').value); })
+  );
+
+  const visible = group === 'TODOS' ? list : list.filter(c => c.group === group);
+  const content = document.getElementById('content');
+
+  if (!visible.length) {
+    content.innerHTML = '<div id="empty"><div class="ei">🔍</div><p>Sin resultados</p></div>';
     return;
   }
-  const sections = {};
-  for (const ch of visible) {
-    if (!sections[ch.group]) sections[ch.group] = [];
-    sections[ch.group].push(ch);
-  }
-  content.innerHTML = Object.entries(sections).map(([group, chs]) => `
+
+  const secOrder = orderedGroups(visible).filter(g => g !== 'TODOS');
+  const sections = Object.fromEntries(secOrder.map(g => [g, []]));
+  for (const c of visible) if (sections[c.group]) sections[c.group].push(c);
+
+  content.innerHTML = secOrder.map(g => `
     <div class="group-section">
-      <div class="group-title">${group}</div>
-      <div class="channels-grid">${chs.map(ch => channelCard(ch)).join('')}</div>
+      <div class="group-title">${g}</div>
+      <div class="grid">${sections[g].map(buildCard).join('')}</div>
     </div>`).join('');
-  content.querySelectorAll('.channel-card').forEach(card => {
-    card.addEventListener('click', () => openModal(card.dataset.idx));
-  });
+
+  content.querySelectorAll('.card').forEach(el =>
+    el.addEventListener('click', () => openModal(+el.dataset.i))
+  );
 }
 
-function channelCard(ch) {
-  const idx = allChannels.indexOf(ch);
-  const qClass = 'badge-' + ch.quality.toLowerCase();
-  const typeClass = ch.type === 'ace' ? 'badge-ace' : 'badge-http';
-  const typeLabel = ch.type === 'ace' ? 'ACE' : 'HTTP';
-  const count = ch.streams.length > 1 ? `<span class="options-count">${ch.streams.length} opciones</span>` : '';
-  const logoHtml = ch.logo
-    ? `<img src="${ch.logo}" alt="" onerror="this.parentElement.innerHTML='<span class=\\"no-logo\\">📺</span>'">`
-    : `<span class="no-logo">📺</span>`;
-  return `
-    <div class="channel-card" data-idx="${idx}">
-      <div class="channel-logo-wrap">${logoHtml}</div>
-      <div class="channel-info">
-        <div class="channel-name">${ch.canonicalName}</div>
-        <div class="channel-meta">
-          <span class="badge ${qClass}">${ch.quality}</span>
-          <span class="badge ${typeClass}">${typeLabel}</span>
-          ${count}
-        </div>
+function buildCard(ch) {
+  const i   = channels.indexOf(ch);
+  const qc  = { '4K':'b4k','FHD':'bfhd','HD':'bhd','SD':'bsd' }[ch.qual] || 'bsd';
+  const tc  = ch.type === 'ace' ? 'bace' : 'bhttp';
+  const tl  = ch.type === 'ace' ? 'ACE'  : 'HTTP';
+  const opts = ch.streams.length > 1 ? `<span class="bopts">${ch.streams.length} opc.</span>` : '';
+  const img  = ch.logo
+    ? `<img src="${ch.logo}" alt="" onerror="imgErr(this)">`
+    : '<span class="nologo">📺</span>';
+  return `<div class="card" data-i="${i}">
+    <div class="logo-wrap">${img}</div>
+    <div class="card-info">
+      <div class="card-name">${ch.cname}</div>
+      <div class="card-meta">
+        <span class="badge ${qc}">${ch.qual}</span>
+        <span class="badge ${tc}">${tl}</span>${opts}
       </div>
-    </div>`;
+    </div>
+  </div>`;
 }
 
-function openModal(idx) {
-  const ch = allChannels[idx];
-  document.getElementById('modal-logo').src = ch.logo || '';
-  document.getElementById('modal-title').textContent = ch.canonicalName;
-  const streamsDiv = document.getElementById('modal-streams');
-  streamsDiv.innerHTML = ch.streams.map((s, i) => {
-    const qClass = 'badge-' + s.quality.toLowerCase();
-    const isAce = s.type === 'ace';
-    const aceHash = isAce ? s.url.replace('acestream://', '') : '';
+// ── Modal ─────────────────────────────────────────────────────────────────────
+function openModal(i) {
+  const ch = channels[i];
+  const mLogo = document.getElementById('m-logo');
+  mLogo.src = ch.logo || '';
+  mLogo.style.display = ch.logo ? '' : 'none';
+  document.getElementById('m-title').textContent = ch.cname;
+
+  const streamsDiv = document.getElementById('m-streams');
+  streamsDiv.innerHTML = ch.streams.map((s, idx) => {
+    const isAce   = s.type === 'ace';
     const httpUrl = isAce
-      ? ACE_ENGINE + '/ace/getstream?id=' + aceHash
+      ? `${ACE_ENG}/ace/getstream?id=${s.url.replace('acestream://', '')}`
       : s.url;
-
-    // VLC maneja tanto HTTP como acestream (via engine). Navegador solo para HTTP.
-    const vlcBtn = `<button class="btn-vlc" onclick="launchPlayer('${httpUrl}', 'vlc')">🟠 VLC</button>`;
-    const browserBtn = !isAce
-      ? `<button class="btn-browser" onclick="openInBrowser('${httpUrl}')">🌐 Navegador</button>`
+    const qc = { '4K':'b4k','FHD':'bfhd','HD':'bhd','SD':'bsd' }[s.qual] || 'bsd';
+    const webBtn = !isAce
+      ? `<button class="btn btn-web" data-action="web" data-url="">🌐 Web</button>`
       : '';
-
-    return `
-      <div class="stream-option">
-        <div class="stream-option-label">
-          <span class="badge ${qClass}">${s.quality}</span>
-          <span>Opción ${i + 1}</span>
-        </div>
-        ${vlcBtn}${browserBtn}
-      </div>`;
+    return `<div class="stream-row" data-http="">
+      <div class="stream-label">
+        <span class="badge ${qc}">${s.qual}</span>
+        <span>Opción ${idx + 1}</span>
+      </div>
+      <button class="btn btn-vlc" data-action="vlc" data-url="">🟠 VLC</button>
+      ${webBtn}
+    </div>`;
   }).join('');
-  document.getElementById('modal-overlay').classList.add('open');
+
+  // Asignar URLs via JS, sin inline strings con comillas
+  const rows = streamsDiv.querySelectorAll('.stream-row');
+  ch.streams.forEach((s, idx) => {
+    const isAce   = s.type === 'ace';
+    const httpUrl = isAce
+      ? `${ACE_ENG}/ace/getstream?id=${s.url.replace('acestream://', '')}`
+      : s.url;
+    const row = rows[idx];
+    row.querySelectorAll('[data-url]').forEach(btn => btn.dataset.url = httpUrl);
+  });
+
+  document.getElementById('overlay').classList.add('open');
 }
 
-document.getElementById('modal-close').addEventListener('click', () => document.getElementById('modal-overlay').classList.remove('open'));
-document.getElementById('modal-overlay').addEventListener('click', e => { if (e.target === e.currentTarget) e.currentTarget.classList.remove('open'); });
+document.getElementById('m-streams').addEventListener('click', e => {
+  const btn = e.target.closest('[data-action]');
+  if (!btn) return;
+  const url    = btn.dataset.url;
+  const action = btn.dataset.action;
+  if (action === 'vlc') launchVLC(url);
+  if (action === 'web') openWeb(url);
+});
 
-function launchPlayer(url, player) {
-  fetch(VLC_SERVER + '/play?player=' + player + '&url=' + encodeURIComponent(url))
+document.getElementById('m-close').addEventListener('click', () =>
+  document.getElementById('overlay').classList.remove('open')
+);
+document.getElementById('overlay').addEventListener('click', e => {
+  if (e.target === e.currentTarget) e.currentTarget.classList.remove('open');
+});
+
+// ── Lanzadores ────────────────────────────────────────────────────────────────
+function launchVLC(url) {
+  fetch(`${VLC_SRV}/play?player=vlc&url=${encodeURIComponent(url)}`)
     .then(r => r.json())
-    .then(d => showStatus(d.ok ? (player === 'ace' ? '🟣 Lanzando Acestream Player…' : '🟠 Lanzando VLC…') : '⚠️ ' + d.error))
-    .catch(() => showStatus('❌ Servidor local no disponible. ¿Está corriendo vlc_server.py?'));
+    .then(d => toast(d.ok ? '🟠 VLC lanzado' : '⚠️ ' + d.error))
+    .catch(() => toast('❌ vlc_server.py no está corriendo'));
 }
 
-function openInBrowser(url) {
+function openWeb(url) {
   window.open(url, '_blank');
-  showStatus('🌐 Abriendo en navegador…');
+  toast('🌐 Abriendo en navegador…');
 }
 
-function showStatus(msg) {
-  const bar = document.getElementById('status-bar');
-  bar.textContent = msg;
-  bar.style.display = 'block';
-  clearTimeout(bar._t);
-  bar._t = setTimeout(() => bar.style.display = 'none', 3500);
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.style.display = 'block';
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.style.display = 'none', 3200);
 }
 
+// ── Carga M3U ─────────────────────────────────────────────────────────────────
 document.getElementById('load-btn').addEventListener('click', loadM3U);
 document.getElementById('m3u-url').addEventListener('keydown', e => { if (e.key === 'Enter') loadM3U(); });
+document.getElementById('search').addEventListener('input', e => render(activeGroup, e.target.value));
 
 function loadM3U() {
   const url = document.getElementById('m3u-url').value.trim();
   if (!url) return;
-  showStatus('Cargando lista…');
+  toast('Cargando…');
   fetch(url)
     .then(r => r.text())
-    .then(text => {
-      const raw = parseM3U(text);
-      allChannels = groupByCanonical(raw);
+    .then(txt => {
+      const raw = parseM3U(txt);
+      channels    = groupChannels(raw);
       activeGroup = 'TODOS';
-      render(activeGroup, '');
-      showStatus(`✅ ${raw.length} streams → ${allChannels.length} canales cargados`);
+      render('TODOS', '');
+      toast(`✅ ${raw.length} streams → ${channels.length} canales`);
     })
-    .catch(err => showStatus('❌ Error cargando M3U: ' + err.message));
+    .catch(e => toast('❌ ' + e.message));
 }
 
-document.getElementById('search').addEventListener('input', e => render(activeGroup, e.target.value));
+function imgErr(img) {
+  const wrap = img.parentElement;
+  if (wrap) { wrap.innerHTML = '<span class="nologo">📺</span>'; }
+}
+
 </script>
 </body>
 </html>
