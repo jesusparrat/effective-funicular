@@ -197,6 +197,59 @@ const ACE_ENGINE = 'http://127.0.0.1:6878';
 let allChannels = [];
 let activeGroup = 'TODOS';
 
+
+const LOGO_MAP = {
+  'DAZN LaLiga':        'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/DAZN_LaLiga_logo.svg/512px-DAZN_LaLiga_logo.svg.png',
+  'DAZN LaLiga 2':      'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/DAZN_LaLiga_logo.svg/512px-DAZN_LaLiga_logo.svg.png',
+  'DAZN LaLiga 3':      'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/DAZN_LaLiga_logo.svg/512px-DAZN_LaLiga_logo.svg.png',
+  'DAZN LaLiga 4':      'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/DAZN_LaLiga_logo.svg/512px-DAZN_LaLiga_logo.svg.png',
+  'DAZN LaLiga 5':      'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/DAZN_LaLiga_logo.svg/512px-DAZN_LaLiga_logo.svg.png',
+  'DAZN 1':             'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/DAZN_1_Logo.svg/512px-DAZN_1_Logo.svg.png',
+  'DAZN 2':             'https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/DAZN_2.svg/512px-DAZN_2.svg.png',
+  'DAZN 3':             'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/DAZN_3.svg/512px-DAZN_3.svg.png',
+  'DAZN 4':             'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/DAZN_4.svg/512px-DAZN_4.svg.png',
+  'DAZN F1':            'https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Formula_1_logo.svg/500px-Formula_1_logo.svg.png',
+  'Mega':               'https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/MEGA.svg/512px-MEGA.svg.png',
+  'Antena 3':           'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Logo_Antena_3_2025_%28Naranja%29.svg/512px-Logo_Antena_3_2025_%28Naranja%29.svg.png',
+  'La Sexta':           'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/La_Sexta_2021.svg/512px-La_Sexta_2021.svg.png',
+  'Telecinco':          'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Telecinco.svg/512px-Telecinco.svg.png',
+  'Cuatro':             'https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Cuatro_%28TV%29.svg/512px-Cuatro_%28TV%29.svg.png',
+  'La 1':               'https://upload.wikimedia.org/wikipedia/commons/7/76/La_1_HD_TVE.png',
+  'La 2':               'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/La_2_HD_TVE.png/512px-La_2_HD_TVE.png',
+  'La 1 UHD':           'https://upload.wikimedia.org/wikipedia/commons/7/76/La_1_HD_TVE.png',
+  '24h':                'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Logo_Canal_24_horas.svg/512px-Logo_Canal_24_horas.svg.png',
+  'Movistar +':         'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Movistar_Plus%2B_2022_logo.svg/512px-Movistar_Plus%2B_2022_logo.svg.png',
+  'Teledeporte':        'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Teledeporte_logo_2021.svg/512px-Teledeporte_logo_2021.svg.png',
+  'GOL PLAY':           'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Gol_Play_logo.svg/512px-Gol_Play_logo.svg.png',
+  'Real Madrid TV':     'https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Real_Madrid_CF.svg/240px-Real_Madrid_CF.svg.png',
+  'Barça TV':           'https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/FC_Barcelona_%28crest%29.svg/240px-FC_Barcelona_%28crest%29.svg.png',
+  'LaLiga Hypermotion': 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/LaLiga_Hypermotion_2023_Vertical_Logo.svg/512px-LaLiga_Hypermotion_2023_Vertical_Logo.svg.png',
+  'M+ LaLigaTV':        'https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/LaLiga_EA_Sports_2023_Vertical_Logo.svg/512px-LaLiga_EA_Sports_2023_Vertical_Logo.svg.png',
+  'Eurosport 1':        'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Eurosport_1_2015.svg/512px-Eurosport_1_2015.svg.png',
+  'Eurosport 2':        'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Eurosport_2_Logo_2015.svg/512px-Eurosport_2_Logo_2015.svg.png',
+  'Copa':               'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Copa_del_Rey_2020_logo.svg/512px-Copa_del_Rey_2020_logo.svg.png',
+  'Supercopa':          'https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/LaLiga_EA_Sports_2023_Vertical_Logo.svg/512px-LaLiga_EA_Sports_2023_Vertical_Logo.svg.png',
+};
+
+function reclassifyGroup(name, group) {
+  const n = name.toUpperCase();
+  if (n.startsWith('DAZN')) return 'DAZN';
+  if (n.includes('COPA DEL REY') || n.includes('COPA FHD') || n.includes('COPA HD')) return 'COPA DEL REY';
+  if (n.includes('SUPERCOPA')) return 'SUPERCOPA';
+  return group;
+}
+
+function resolveLogo(canonicalName, m3uLogo) {
+  for (const [key, url] of Object.entries(LOGO_MAP)) {
+    if (canonicalName.toUpperCase().includes(key.toUpperCase()) ||
+        key.toUpperCase().includes(canonicalName.toUpperCase())) {
+      return url;
+    }
+  }
+  return m3uLogo; 
+}
+
+
 function parseM3U(text) {
   const lines = text.split(/\r?\n/);
   const channels = [];
@@ -212,6 +265,7 @@ function parseM3U(text) {
       const groupMatch = line.match(/group-title="([^"]*)"/i);
       current.group = groupMatch ? groupMatch[1].trim().toUpperCase() : 'OTROS';
       current.quality = detectQuality(current.name);
+      current.group = reclassifyGroup(current.name, current.group);
     } else if (current && line && !line.startsWith('#')) {
       current.url = line;
       current.type = line.startsWith('acestream://') ? 'ace' : 'http';
@@ -242,7 +296,9 @@ function groupByCanonical(channels) {
   for (const ch of channels) {
     const key = ch.group + '||' + getCanonicalName(ch.name);
     if (!map.has(key)) {
-      map.set(key, { ...ch, streams: [ch], canonicalName: getCanonicalName(ch.name) });
+      const cName = getCanonicalName(ch.name);
+      const resolvedLogo = resolveLogo(cName, ch.logo);
+      map.set(key, { ...ch, logo: resolvedLogo, streams: [ch], canonicalName: cName });
     } else {
       map.get(key).streams.push(ch);
     }
@@ -321,9 +377,7 @@ function openModal(idx) {
       ? ACE_ENGINE + '/ace/getstream?id=' + aceHash
       : s.url;
 
-    const aceBtn = isAce
-      ? `<button class="btn-ace" onclick="launchPlayer('${httpUrl}', 'ace')">🟣 Acestream</button>`
-      : '';
+    // VLC maneja tanto HTTP como acestream (via engine). Navegador solo para HTTP.
     const vlcBtn = `<button class="btn-vlc" onclick="launchPlayer('${httpUrl}', 'vlc')">🟠 VLC</button>`;
     const browserBtn = !isAce
       ? `<button class="btn-browser" onclick="openInBrowser('${httpUrl}')">🌐 Navegador</button>`
@@ -335,7 +389,7 @@ function openModal(idx) {
           <span class="badge ${qClass}">${s.quality}</span>
           <span>Opción ${i + 1}</span>
         </div>
-        ${aceBtn}${vlcBtn}${browserBtn}
+        ${vlcBtn}${browserBtn}
       </div>`;
   }).join('');
   document.getElementById('modal-overlay').classList.add('open');
