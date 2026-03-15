@@ -1,8 +1,4 @@
 #!/usr/bin/env python3
-"""
-Mini servidor Flask local para lanzar VLC / Acestream Player desde la web app.
-Ejecutar: python vlc_server.py
-"""
 from flask import Flask, request, jsonify
 import subprocess, shutil
 
@@ -23,26 +19,34 @@ def find_bin(names, fallback):
 @app.route("/play")
 def play():
     url = request.args.get("url", "")
-    player = request.args.get("player", "vlc")  # "vlc" o "ace"
+    player = request.args.get("player", "vlc")
     if not url:
         return jsonify({"ok": False, "error": "No URL provided"})
 
     if player == "ace":
         bin_path = find_bin(["acestreamplayer"], "/snap/bin/acestreamplayer")
-        # Acestream Player acepta la URL http del engine directamente
-        cmd = [bin_path, url]
+        if "ace/getstream?id=" in url:
+            hash_id = url.split("ace/getstream?id=")[-1].split("&")[0]
+            ace_url = "acestream://" + hash_id
+        elif url.startswith("acestream://"):
+            ace_url = url
+        else:
+            ace_url = url
+        cmd = [bin_path, ace_url]
     else:
         bin_path = find_bin(["vlc"], "/snap/bin/vlc")
         cmd = [bin_path, "--no-video-title-show", url]
 
     try:
         subprocess.Popen(cmd)
-        return jsonify({"ok": True, "cmd": cmd[0]})
+        return jsonify({"ok": True, "cmd": cmd[0], "url": cmd[1]})
     except Exception as e:
         return jsonify({"ok": False, "error": str(e)})
 
 if __name__ == "__main__":
-    print("Server running on http://127.0.0.1:5566")
-    print(f"  VLC:              {find_bin(['vlc'], '/snap/bin/vlc')}")
-    print(f"  Acestream Player: {find_bin(['acestreamplayer'], '/snap/bin/acestreamplayer')}")
+    vlc = find_bin(["vlc"], "/snap/bin/vlc")
+    ace = find_bin(["acestreamplayer"], "/snap/bin/acestreamplayer")
+    print(f"Server running on http://127.0.0.1:5566")
+    print(f"  VLC:              {vlc}")
+    print(f"  Acestream Player: {ace}")
     app.run(host="127.0.0.1", port=5566)
