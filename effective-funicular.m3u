@@ -456,5 +456,6 @@ acestream://3e73fe77d956b07ff233cdb3b89966fae33391e6
 #EXTINF:-1 tvg-logo="https://album.mediaset.es/eimg/2019/12/11/bxL4goyXJpmn9qOT9bdBy4.jpg" group-title="TDT" tvg-id="Telecinco FHD", Telecinco FHD
 acestream://6d2af61410d7fb6ed46fc7fe0c199951389bf75b
 
-#EXTINF:-1 tvg-logo="https://album.mediaset.es/eimg/2019/12/11/bxL4goyXJpmn9qOT9bdBy4.jpg" group-title="TDT" tvg-id="Telecinco FHD", Telecinco FHD
-acestream://5133d1e8f45095f0b7dabbd78db0ce19a496f7bf
+
+#EXTINF:-1 tvg-logo="https://album.mediaset.es/eimg/2019/12/11/bxL4goyXJpmn9qOT9bdBy4.jpg" group-title="PARAMOUNT PLUS" tvg-id="PARAMOUNT PLUS", PARAMOUNT PLUS
+acestream://56357b475f089c21546d5678494eecf1839c8f8d
